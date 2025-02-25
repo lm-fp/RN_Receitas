@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import {
   View,
   Text,
@@ -7,10 +9,15 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Logo } from "../../components/logo";
-
 import { Ionicons } from "@expo/vector-icons";
 
 export default function Home() {
+  const [inputValue, setInputValue] = useState("");
+ 
+  function handerSearch() {
+    console.log("Voce digitou: ", inputValue);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Logo />
@@ -18,15 +25,16 @@ export default function Home() {
       <Text style={styles.title}>que combina com voce</Text>
 
       <View style={styles.form}>
-        <TextInput
+        <TextInput 
           placeholder="Digite o nome da comida..."
           style={styles.input}
+          value={inputValue}
+          onChangeText={(text) => setInputValue(text)}
         />
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handerSearch}>
           <Ionicons name="search" size={28} color="#4cbe6c" />
         </TouchableOpacity>
       </View>
-
     </SafeAreaView>
   );
 }
@@ -58,9 +66,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  input:{
-     width: "90%",
-     maxWidth: "90%",
-     height: 54,
-  }
+  input: {
+    width: "90%",
+    maxWidth: "90%",
+    height: 54,
+  },
 });
