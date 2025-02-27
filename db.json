@@ -3,7 +3,7 @@
     { 
       "id": "1",
       "name":  "Strogonoff",
-      " ": "4",
+      "total_ingredients": "4",
       "time": 40,
       "cover": "https://i.imgur.com/or7Phgi.jpeg",
       "video":"https://www.youtube.com/watch?v=y9yKuT1m9LI",
