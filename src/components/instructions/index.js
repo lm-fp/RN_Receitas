@@ -1,9 +1,24 @@
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 
-export function Instructions() {
+export function Instructions({data, index}) {
   return (
-    <View>
-      <Text>Instructions</Text>
+    <View style={styles.container} >
+      <Text style={styles.name}>{index+1} - </Text>
+      <Text style={styles.text}>{data.text}</Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container:{
+    flexDirection: "row",
+    padding: 8
+  },
+  name:{
+    fontWeight: "bold",
+    fontSize: 16
+  },
+  text:{
+    lineHeight: 18
+  }
+});

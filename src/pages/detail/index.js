@@ -32,7 +32,7 @@ export default function Detail() {
   }, [navigation, route.params?.data]);
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView contentContainerStyle={{ paddingBottom: 14 }} style={styles.container} showsVerticalScrollIndicator={false}>
       <Pressable>
         <View style={styles.playIcon}>
           <AntDesign name="playcircleo" size={48} color="#fafafa" />
@@ -58,6 +58,16 @@ export default function Detail() {
       {route.params?.data.ingredients.map((item) => (
         <Ingredients key={item.id} data={item} />
       ))}
+
+      <View style={styles.instructionsArea}>
+        <Text style={styles.instructionsText}>Modo de preparo</Text>
+        <Feather name="arrow-down" size={24} color="#fff"/>
+      </View>
+
+      {route.params?.data.instructions.map((item, index) => (
+        <Instructions key={item.id} data={item} index={index} />
+      ))}
+
 
     </ScrollView>
   );
@@ -104,4 +114,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 4,
   },
+  instructionsArea:{
+    backgroundColor: "#4cbe6c",
+    flexDirection: "row", 
+    // justifyContent: "space-between",
+    alignItems: "center",
+    padding: 8,
+    borderRadius: 4,
+    marginTop: 14
+  },
+  instructionsText:{
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: 500,
+    marginRight: 8
+  }
 });
