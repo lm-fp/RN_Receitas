@@ -1,4 +1,4 @@
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useState } from "react";
 import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
 
 import {
@@ -8,15 +8,20 @@ import {
   Pressable,
   ScrollView,
   Image,
+  Modal,
+  Share,
 } from "react-native";
+
 import { useRoute, useNavigation } from "@react-navigation/native";
 
 import { Ingredients } from "../../components/ingredients";
 import { Instructions } from "../../components/instructions";
+import { VideoView } from "../../components/video";
 
 export default function Detail() {
   const route = useRoute();
   const navigation = useNavigation();
+  const [showVideo, setShowVideo] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -31,9 +36,28 @@ export default function Detail() {
     });
   }, [navigation, route.params?.data]);
 
+  function handleOpenVideo() {
+    setShowVideo(true);
+  }
+
+  async function shareReceipe(){
+    try{
+      await Share.share({
+        url: "https://sujeitoprogramador.com",
+        message: `Receita: ${route.params?.data.name}\nIngredientes: ${route.params?.data.total_ingredients}`
+      })
+    }catch(error){
+      console.log("erro");
+    }
+  }
+
   return (
-    <ScrollView contentContainerStyle={{ paddingBottom: 14 }} style={styles.container} showsVerticalScrollIndicator={false}>
-      <Pressable>
+    <ScrollView
+      contentContainerStyle={{ paddingBottom: 14 }}
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
+      <Pressable onPress={handleOpenVideo}>
         <View style={styles.playIcon}>
           <AntDesign name="playcircleo" size={48} color="#fafafa" />
         </View>
@@ -50,7 +74,7 @@ export default function Detail() {
             Ingredientes ({route.params?.data.total_ingredients})
           </Text>
         </View>
-        <Pressable>
+        <Pressable onPress={shareReceipe}>
           <Feather name="share-2" size={24} color="#121212" />
         </Pressable>
       </View>
@@ -61,14 +85,19 @@ export default function Detail() {
 
       <View style={styles.instructionsArea}>
         <Text style={styles.instructionsText}>Modo de preparo</Text>
-        <Feather name="arrow-down" size={24} color="#fff"/>
+        <Feather name="arrow-down" size={24} color="#fff" />
       </View>
 
       {route.params?.data.instructions.map((item, index) => (
         <Instructions key={item.id} data={item} index={index} />
       ))}
 
-
+      <Modal visible={showVideo} animationType="slide">
+        <VideoView
+          handleClose={() => setShowVideo(false)}
+          videoUrl={route.params?.data.video}
+        />
+      </Modal>
     </ScrollView>
   );
 }
@@ -114,19 +143,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 4,
   },
-  instructionsArea:{
+  instructionsArea: {
     backgroundColor: "#4cbe6c",
-    flexDirection: "row", 
+    flexDirection: "row",
     // justifyContent: "space-between",
     alignItems: "center",
     padding: 8,
     borderRadius: 4,
-    marginTop: 14
+    marginTop: 14,
   },
-  instructionsText:{
+  instructionsText: {
     color: "#fff",
     fontSize: 18,
     fontWeight: 500,
-    marginRight: 8
-  }
+    marginRight: 8,
+  },
 });
