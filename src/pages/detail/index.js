@@ -1,5 +1,5 @@
 import { useLayoutEffect, useState } from "react";
-import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
+import { Ionicons, AntDesign, Feather, Entypo } from "@expo/vector-icons";
 
 import {
   View,
@@ -17,36 +17,58 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import { Ingredients } from "../../components/ingredients";
 import { Instructions } from "../../components/instructions";
 import { VideoView } from "../../components/video";
+import { isFavorite, saveFavorite, removeItem } from "../../utils/storage";
 
 export default function Detail() {
   const route = useRoute();
   const navigation = useNavigation();
   const [showVideo, setShowVideo] = useState(false);
+  const [favorite, setFavorite] = useState(false);
 
   useLayoutEffect(() => {
+    async function getStatusFavorites() {
+      const receipeFavorite = await isFavorite(route.params?.data);
+      setFavorite(receipeFavorite);
+    }
+    getStatusFavorites();
+
     navigation.setOptions({
       title: route.params?.data
         ? route.params?.data.name
         : "Detalhes da receita",
       headerRight: () => (
-        <Pressable onPress={() => console.log("Favoritar")}>
-          <Ionicons name="heart" size={28} color="#ff4141" />
+        <Pressable onPress={() => handleFavoriteReceipe(route.params?.data)}>
+          {favorite ? (
+            <Entypo name="heart" size={28} color="#ff4141" />
+          ) : (
+            <Entypo name="heart-outlined" size={28} color="#ff4141" />
+          )}
         </Pressable>
       ),
     });
-  }, [navigation, route.params?.data]);
+  }, [navigation, route.params?.data, favorite]);
+
+  async function handleFavoriteReceipe(receipe) {
+    if (favorite) {
+      await removeItem(receipe.id)
+      setFavorite(false);
+    } else {
+      await saveFavorite("@appreceitas", receipe)
+      setFavorite(true);
+    }
+  }
 
   function handleOpenVideo() {
     setShowVideo(true);
   }
 
-  async function shareReceipe(){
-    try{
+  async function shareReceipe() {
+    try {
       await Share.share({
         url: "https://sujeitoprogramador.com",
-        message: `Receita: ${route.params?.data.name}\nIngredientes: ${route.params?.data.total_ingredients}`
-      })
-    }catch(error){
+        message: `Receita: ${route.params?.data.name}\nIngredientes: ${route.params?.data.total_ingredients}`,
+      });
+    } catch (error) {
       console.log("erro");
     }
   }
